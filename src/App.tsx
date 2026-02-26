@@ -691,6 +691,20 @@ function App() {
         />
       )}
 
+      {/* Recenter button */}
+      {userPosition && (
+        <button 
+          className="recenter-btn"
+          onClick={() => {
+            if (userPosition && mapInstance.current) {
+              mapInstance.current.setView(userPosition, 16, { animate: true })
+            }
+          }}
+        >
+          📍
+        </button>
+      )}
+
       {/* Tap hint */}
       {!selectedLocation && !lockedLocation && !showTracker && (
         <div className="tap-hint">

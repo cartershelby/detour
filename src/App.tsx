@@ -226,13 +226,13 @@ function App() {
         (pos) => {
           const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
           
-          // Add user marker - green pulsing dot
+          // Add user marker - small solid dot with large glow
           userMarkerRef.current = L.circleMarker(userLatLng, {
-            radius: 8,
+            radius: 5,
             fillColor: '#10b981',
             fillOpacity: 1,
-            color: 'white',
-            weight: 3,
+            color: '#10b981',
+            weight: 0,
             className: 'user-marker'
           }).addTo(mapInstance.current!)
           

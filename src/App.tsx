@@ -113,11 +113,12 @@ function Logo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 }
 
 // Floating Info Card Component
-function InfoCard({ location, layer, onClose, onMore }: { 
+function InfoCard({ location, layer, onClose, onPrev, onNext }: { 
   location: Location
   layer: number
   onClose: () => void
-  onMore: () => void 
+  onPrev: () => void
+  onNext: () => void 
 }) {
   const layerContent = [
     location.layers.description,
@@ -127,7 +128,8 @@ function InfoCard({ location, layer, onClose, onMore }: {
   ].filter(Boolean)
   
   const currentContent = layerContent[layer] || layerContent[0]
-  const hasMore = layer < layerContent.length - 1
+  const hasPrev = layer > 0
+  const hasNext = layer < layerContent.length - 1
   
   const layerLabels = ['Story', 'Fun Fact', 'Deeper History', 'Connections']
   
@@ -138,15 +140,28 @@ function InfoCard({ location, layer, onClose, onMore }: {
       <div className="card-title">{location.name}</div>
       <div className="card-layer-label">{layerLabels[layer]}</div>
       <div className="card-desc">{currentContent}</div>
-      {hasMore && (
-        <button className="card-more" onClick={onMore}>
-          📖 Discover more →
+      
+      {/* Navigation arrows */}
+      <div className="card-nav">
+        <button 
+          className={`nav-arrow ${!hasPrev ? 'disabled' : ''}`} 
+          onClick={onPrev}
+          disabled={!hasPrev}
+        >
+          ←
         </button>
-      )}
-      <div className="card-dots">
-        {layerContent.map((_, i) => (
-          <div key={i} className={`dot ${i === layer ? 'active' : ''}`} />
-        ))}
+        <div className="card-dots">
+          {layerContent.map((_, i) => (
+            <div key={i} className={`dot ${i === layer ? 'active' : ''}`} />
+          ))}
+        </div>
+        <button 
+          className={`nav-arrow ${!hasNext ? 'disabled' : ''}`} 
+          onClick={onNext}
+          disabled={!hasNext}
+        >
+          →
+        </button>
       </div>
     </div>
   )
@@ -215,7 +230,11 @@ function App() {
     setInfoLayer(0)
   }
 
-  const handleMoreLayer = () => {
+  const handlePrevLayer = () => {
+    setInfoLayer(prev => Math.max(0, prev - 1))
+  }
+
+  const handleNextLayer = () => {
     setInfoLayer(prev => prev + 1)
   }
 
@@ -244,7 +263,8 @@ function App() {
           location={selectedLocation}
           layer={infoLayer}
           onClose={handleCloseCard}
-          onMore={handleMoreLayer}
+          onPrev={handlePrevLayer}
+          onNext={handleNextLayer}
         />
       )}
 

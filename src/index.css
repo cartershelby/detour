@@ -185,23 +185,38 @@ body {
   margin-bottom: 16px;
 }
 
-.card-more {
-  background: none;
+.card-nav {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 4px;
+}
+
+.nav-arrow {
+  width: 36px;
+  height: 36px;
   border: none;
-  padding: 0;
-  font-size: 14px;
-  font-weight: 500;
+  background: var(--bg-light);
+  border-radius: 50%;
+  font-size: 16px;
   color: var(--electric-blue);
   cursor: pointer;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
-  transition: opacity 0.2s;
+  justify-content: center;
+  transition: all 0.2s;
+  font-weight: 500;
 }
 
-.card-more:hover {
-  opacity: 0.8;
+.nav-arrow:hover:not(.disabled) {
+  background: var(--electric-blue);
+  color: white;
+}
+
+.nav-arrow.disabled {
+  color: #d1d5db;
+  cursor: not-allowed;
 }
 
 .card-dots {

@@ -124,42 +124,26 @@ body {
   pointer-events: auto;
 }
 
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-}
-
-.status-dot.locating {
-  background: #f59e0b;
-  animation: pulse 1.5s ease-in-out infinite;
-}
-
-.status-dot.ready {
-  background: #10b981;
-}
-
-/* Hint */
-.hint {
+/* Tap hint at bottom */
+.tap-hint {
   position: absolute;
-  bottom: 100px;
+  bottom: 24px;
   left: 50%;
   transform: translateX(-50%);
   background: white;
-  padding: 20px 28px;
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.12);
-  text-align: center;
+  padding: 12px 20px;
+  border-radius: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.12);
   z-index: 1000;
-  animation: slideUp 0.4s ease-out;
 }
 
-.hint p {
-  font-size: 0.9rem;
+.tap-hint p {
+  font-size: 0.85rem;
   color: var(--text-muted);
-  margin-top: 12px;
-  font-weight: 400;
+  margin: 0;
 }
+
+/* Hint - removed, using tap-hint now */
 
 /* Location card */
 .card {

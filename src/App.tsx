@@ -2,16 +2,6 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
-// Fix Leaflet's default icon path issue
-import icon from 'leaflet/dist/images/marker-icon.png'
-import iconShadow from 'leaflet/dist/images/marker-shadow.png'
-L.Marker.prototype.options.icon = L.icon({
-  iconUrl: icon,
-  shadowUrl: iconShadow,
-  iconSize: [25, 41],
-  iconAnchor: [12, 41]
-})
-
 interface Location {
   id: string
   name: string
@@ -50,6 +40,7 @@ const LOCATIONS: Location[] = [
 
 const PARIS_CENTER: [number, number] = [48.8637, 2.3615]
 const UNLOCK_RADIUS = 200 // meters
+const BRAND_BLUE = '#047AE0'
 
 function getDistanceInMeters(lat1: number, lng1: number, lat2: number, lng2: number): number {
   const R = 6371000
@@ -59,6 +50,53 @@ function getDistanceInMeters(lat1: number, lng1: number, lat2: number, lng2: num
   const Δλ = (lng2 - lng1) * Math.PI / 180
   const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+// Logo component with pin as T
+function Logo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
+  const sizes = {
+    sm: { text: '1.1rem', sub: '0.5rem' },
+    md: { text: '1.5rem', sub: '0.65rem' },
+    lg: { text: '2.5rem', sub: '1rem' }
+  }
+  
+  return (
+    <div style={{ display: 'flex', alignItems: 'baseline', gap: '2px' }}>
+      <span style={{ 
+        fontSize: sizes[size].text, 
+        fontWeight: 600, 
+        color: '#1a1a2e',
+        letterSpacing: '-0.02em'
+      }}>
+        Dé
+      </span>
+      <span style={{ 
+        fontSize: sizes[size].text, 
+        fontWeight: 600, 
+        color: BRAND_BLUE,
+      }}>
+        📍
+      </span>
+      <span style={{ 
+        fontSize: sizes[size].text, 
+        fontWeight: 600, 
+        color: '#1a1a2e',
+        letterSpacing: '-0.02em'
+      }}>
+        our
+      </span>
+      <span style={{ 
+        fontSize: sizes[size].sub, 
+        fontWeight: 400, 
+        color: '#64748b',
+        textTransform: 'uppercase',
+        letterSpacing: '0.15em',
+        marginLeft: '6px'
+      }}>
+        Obscura
+      </span>
+    </div>
+  )
 }
 
 function App() {
@@ -73,9 +111,9 @@ function App() {
   const [isLocating, setIsLocating] = useState(true)
   const [showSplash, setShowSplash] = useState(true)
 
-  // Hide splash after 2s
+  // Hide splash after 2.5s
   useEffect(() => {
-    const timer = setTimeout(() => setShowSplash(false), 2000)
+    const timer = setTimeout(() => setShowSplash(false), 2500)
     return () => clearTimeout(timer)
   }, [])
 
@@ -100,7 +138,7 @@ function App() {
       zoomControl: false
     })
 
-    // Add subtle grayscale tiles
+    // CARTO light tiles - clean and minimal
     L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
       attribution: '© OpenStreetMap © CARTO',
       maxZoom: 19
@@ -117,7 +155,7 @@ function App() {
           setIsLocating(false)
           updateUnlocked(coords[0], coords[1])
           
-          // User marker - green dot
+          // User marker - green dot with pulse
           userMarkerRef.current = L.circleMarker(coords, {
             radius: 8,
             fillColor: '#10b981',
@@ -157,40 +195,30 @@ function App() {
   useEffect(() => {
     if (!mapInstance.current) return
 
-    LOCATIONS.forEach(loc => {
-      const isUnlocked = unlockedIds.includes(loc.id)
-      const isSelected = selectedLocation?.id === loc.id
-      const existing = markersRef.current.get(loc.id)
+    // Clear old markers
+    markersRef.current.forEach((marker) => marker.remove())
+    markersRef.current.clear()
 
-      // Remove if locked and not selected
-      if (!isUnlocked && !isSelected && existing) {
-        existing.remove()
-        markersRef.current.delete(loc.id)
-        return
-      }
+    // Add markers for unlocked locations
+    LOCATIONS.filter(loc => unlockedIds.includes(loc.id)).forEach(location => {
+      const latLng: [number, number] = [location.coordinates[1], location.coordinates[0]]
+      const isSelected = selectedLocation?.id === location.id
+      
+      const marker = L.circleMarker(latLng, {
+        radius: isSelected ? 14 : 10,
+        fillColor: BRAND_BLUE,
+        fillOpacity: 0.9,
+        color: 'white',
+        weight: 3,
+        className: 'location-marker'
+      }).addTo(mapInstance.current!)
 
-      // Add if should be visible
-      if ((isUnlocked || isSelected) && !existing) {
-        const latLng: [number, number] = [loc.coordinates[1], loc.coordinates[0]]
-        const marker = L.circleMarker(latLng, {
-          radius: isSelected ? 12 : 10,
-          fillColor: '#3b82f6',
-          fillOpacity: 0.9,
-          color: 'white',
-          weight: 3
-        }).addTo(mapInstance.current!)
+      marker.on('click', () => {
+        setSelectedLocation(location)
+        mapInstance.current?.setView(latLng, 17, { animate: true })
+      })
 
-        marker.on('click', () => {
-          setSelectedLocation(loc)
-          mapInstance.current?.setView(latLng, 17, { animate: true })
-        })
-
-        // Add pulsing animation via CSS class
-        const el = marker.getElement()
-        if (el) el.classList.add('pulse-marker')
-
-        markersRef.current.set(loc.id, marker)
-      }
+      markersRef.current.set(location.id, marker)
     })
   }, [unlockedIds, selectedLocation])
 
@@ -198,8 +226,12 @@ function App() {
     return (
       <div className="splash">
         <div className="splash-content">
-          <h1>Détour</h1>
-          <p>Obscure</p>
+          <div className="splash-logo">
+            <span className="splash-de">Dé</span>
+            <span className="splash-pin">📍</span>
+            <span className="splash-our">our</span>
+          </div>
+          <p className="splash-sub">Obscura</p>
         </div>
       </div>
     )
@@ -211,9 +243,8 @@ function App() {
       
       {/* Header */}
       <div className="header">
-        <div className="logo">
-          <span className="logo-text">Détour</span>
-          <span className="logo-sub">Obscure</span>
+        <div className="logo-container">
+          <Logo size="sm" />
         </div>
         <div className="status">
           <div className={`status-dot ${isLocating ? 'locating' : 'ready'}`} />
@@ -224,6 +255,7 @@ function App() {
       {/* Empty state hint */}
       {unlockedIds.length === 0 && !isLocating && !selectedLocation && (
         <div className="hint">
+          <Logo size="md" />
           <p>Walk within 200m of a location to unlock its story</p>
         </div>
       )}

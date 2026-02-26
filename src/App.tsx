@@ -2,6 +2,12 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
+interface TimelineEvent {
+  year: string
+  title: string
+  description: string
+}
+
 interface Location {
   id: string
   name: string
@@ -13,12 +19,8 @@ interface Location {
     category: string
     hint: string
   }
-  layers: {
-    description: string
-    funFact: string
-    deeperHistory?: string
-    connections?: string
-  }
+  timeline: TimelineEvent[]
+  funFact: string
 }
 
 const LOCATIONS: Location[] = [
@@ -33,12 +35,29 @@ const LOCATIONS: Location[] = [
       category: 'Architecture',
       hint: 'A legendary figure from both history and fiction once lived here...'
     },
-    layers: {
-      description: "Built by the legendary alchemist Nicolas Flamel — yes, the one from Harry Potter was based on a real person who lived right here in the Marais.",
-      funFact: "Flamel was actually a successful scribe and manuscript dealer. The alchemy legends grew after his death when people noticed he had become mysteriously wealthy.",
-      deeperHistory: "The house was built as a hostel for the poor, with the requirement that lodgers pray for the souls of Flamel and his wife Perenelle. The carved inscriptions on the facade still survive.",
-      connections: "Walk 200m east to find the Tour Saint-Jacques, where Flamel allegedly conducted alchemical experiments."
-    }
+    timeline: [
+      {
+        year: '1407',
+        title: 'Construction',
+        description: "Nicolas Flamel builds this house as a hostel for the poor. Lodgers were required to pray for the souls of Flamel and his wife Perenelle."
+      },
+      {
+        year: '1418',
+        title: "Flamel's Death",
+        description: "Flamel dies wealthy, sparking rumors of alchemy. He was actually a successful scribe and manuscript dealer — the alchemy legends grew posthumously."
+      },
+      {
+        year: '1900s',
+        title: 'Rediscovery',
+        description: "The building is recognized as Paris's oldest stone house. The carved inscriptions on the facade, worn but visible, become a tourist attraction."
+      },
+      {
+        year: '1997',
+        title: 'Potter Fame',
+        description: "J.K. Rowling includes Nicolas Flamel in Harry Potter. Suddenly the real Flamel's house sees a new wave of visitors seeking the Philosopher's Stone."
+      }
+    ],
+    funFact: "The carved inscriptions on the facade were instructions for the poor lodgers — medieval terms of service, essentially."
   },
   {
     id: 'synagogue-pavee',
@@ -51,12 +70,29 @@ const LOCATIONS: Location[] = [
       category: 'Religious',
       hint: 'The architect who shaped the Paris Métro created something unexpected here...'
     },
-    layers: {
-      description: "Designed by Hector Guimard, famous for those iconic Paris Métro entrances. This is one of the few Guimard buildings you can actually enter.",
-      funFact: "Guimard married an American Jewish woman, which likely influenced his decision to design this synagogue — his only religious building ever.",
-      deeperHistory: "The synagogue survived Nazi occupation but was damaged. The undulating concrete facade was revolutionary for religious architecture at the time.",
-      connections: "The Pletzl (Jewish quarter) surrounds this area — explore rue des Rosiers for more history."
-    }
+    timeline: [
+      {
+        year: '1913',
+        title: 'Construction',
+        description: "Hector Guimard, famous for Paris Métro entrances, designs this synagogue — his only religious building. The undulating concrete facade was revolutionary."
+      },
+      {
+        year: '1940',
+        title: 'Nazi Occupation',
+        description: "During WWII, the synagogue is damaged but survives. The Marais Jewish community faces deportation; many never return."
+      },
+      {
+        year: '1945',
+        title: 'Liberation',
+        description: "The synagogue reopens after the war. It becomes a symbol of the resilient Pletzl (Jewish quarter) community."
+      },
+      {
+        year: '2019',
+        title: 'Restoration',
+        description: "Major restoration preserves Guimard's Art Nouveau details. The building is now one of the few Guimard interiors open to visitors."
+      }
+    ],
+    funFact: "Guimard married an American Jewish woman — likely the reason he took this unusual commission."
   },
   {
     id: 'cafe-suedois',
@@ -69,12 +105,29 @@ const LOCATIONS: Location[] = [
       category: 'Cultural',
       hint: 'A Nordic secret hides within these centuries-old walls...'
     },
-    layers: {
-      description: "A Renaissance-era Marais mansion converted into a Swedish cultural center. The courtyard café serves exceptional fika (Swedish coffee break with pastries).",
-      funFact: "The building was once owned by a tax collector who was murdered during the French Revolution. The Swedes acquired it in 1971.",
-      deeperHistory: "The Hôtel de Marle features a stunning Renaissance courtyard that survived centuries of Parisian transformation largely intact.",
-      connections: "The nearby Musée Picasso occupies a similar 17th-century mansion — both showcase how the aristocracy once lived."
-    }
+    timeline: [
+      {
+        year: '1580s',
+        title: 'Construction',
+        description: "Hôtel de Marle is built as a Renaissance mansion. The stunning courtyard survives centuries of Parisian transformation largely intact."
+      },
+      {
+        year: '1789',
+        title: 'Revolution',
+        description: "The owner, a tax collector, is murdered during the French Revolution. The building passes through various hands."
+      },
+      {
+        year: '1971',
+        title: 'Swedish Acquisition',
+        description: "Sweden acquires the building and transforms it into a cultural center. A courtyard café introduces Parisians to fika."
+      },
+      {
+        year: 'Today',
+        title: 'Cultural Hub',
+        description: "The café serves exceptional cinnamon buns and coffee. It's a hidden oasis where Swedish and French cultures blend."
+      }
+    ],
+    funFact: "Fika isn't just a coffee break — it's a Swedish philosophy of slowing down and connecting with others."
   }
 ]
 
@@ -216,7 +269,7 @@ function LockedCard({ location, distance, onClose }: {
   )
 }
 
-// Floating Info Card Component
+// Floating Info Card Component with Timeline
 function InfoCard({ location, layer, onClose, onPrev, onNext }: { 
   location: Location
   layer: number
@@ -224,26 +277,34 @@ function InfoCard({ location, layer, onClose, onPrev, onNext }: {
   onPrev: () => void
   onNext: () => void 
 }) {
-  const layerContent = [
-    location.layers.description,
-    location.layers.funFact,
-    location.layers.deeperHistory,
-    location.layers.connections
-  ].filter(Boolean)
-  
-  const currentContent = layerContent[layer] || layerContent[0]
+  const totalLayers = location.timeline.length + 1 // timeline events + fun fact
   const hasPrev = layer > 0
-  const hasNext = layer < layerContent.length - 1
+  const hasNext = layer < totalLayers - 1
   
-  const layerLabels = ['Story', 'Fun Fact', 'Deeper History', 'Connections']
+  // Last layer is the fun fact
+  const isFunFact = layer === location.timeline.length
+  const currentEvent = !isFunFact ? location.timeline[layer] : null
   
   return (
     <div className="info-card">
       <button className="card-close" onClick={onClose}>×</button>
-      <div className="card-period">{location.period}</div>
-      <div className="card-title">{location.name}</div>
-      <div className="card-layer-label">{layerLabels[layer]}</div>
-      <div className="card-desc">{currentContent}</div>
+      <div className="card-header">
+        <div className="card-title">{location.name}</div>
+        <div className="card-subtitle">{location.shortDesc}</div>
+      </div>
+      
+      {!isFunFact && currentEvent ? (
+        <div className="timeline-event">
+          <div className="event-year">{currentEvent.year}</div>
+          <div className="event-title">{currentEvent.title}</div>
+          <div className="event-desc">{currentEvent.description}</div>
+        </div>
+      ) : (
+        <div className="fun-fact-section">
+          <div className="fun-fact-label">💡 Fun Fact</div>
+          <div className="fun-fact-text">{location.funFact}</div>
+        </div>
+      )}
       
       <div className="card-nav">
         <button 
@@ -254,8 +315,11 @@ function InfoCard({ location, layer, onClose, onPrev, onNext }: {
           ←
         </button>
         <div className="card-dots">
-          {layerContent.map((_, i) => (
-            <div key={i} className={`dot ${i === layer ? 'active' : ''}`} />
+          {Array.from({ length: totalLayers }).map((_, i) => (
+            <div 
+              key={i} 
+              className={`dot ${i === layer ? 'active' : ''} ${i === totalLayers - 1 ? 'fun-fact-dot' : ''}`} 
+            />
           ))}
         </div>
         <button 
@@ -265,6 +329,10 @@ function InfoCard({ location, layer, onClose, onPrev, onNext }: {
         >
           →
         </button>
+      </div>
+      
+      <div className="timeline-indicator">
+        {!isFunFact ? `${layer + 1} of ${location.timeline.length} events` : 'Bonus fact'}
       </div>
     </div>
   )

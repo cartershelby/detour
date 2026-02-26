@@ -342,6 +342,90 @@ body {
   }
 }
 
+.card-header {
+  margin-bottom: 16px;
+  padding-right: 32px;
+}
+
+.card-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.3;
+  margin-bottom: 4px;
+}
+
+.card-subtitle {
+  font-size: 13px;
+  color: var(--text-muted);
+}
+
+/* Timeline Event */
+.timeline-event {
+  background: var(--bg-light);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+  border-left: 3px solid var(--electric-blue);
+}
+
+.event-year {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--electric-blue);
+  margin-bottom: 4px;
+}
+
+.event-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 8px;
+}
+
+.event-desc {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.55;
+}
+
+/* Fun Fact Section */
+.fun-fact-section {
+  background: linear-gradient(135deg, #fef9c3 0%, #fef08a 100%);
+  border-radius: 14px;
+  padding: 16px;
+  margin-bottom: 16px;
+}
+
+.fun-fact-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: #a16207;
+  margin-bottom: 8px;
+}
+
+.fun-fact-text {
+  font-size: 13px;
+  color: #713f12;
+  line-height: 1.55;
+}
+
+.timeline-indicator {
+  text-align: center;
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 8px;
+}
+
+/* Fun fact dot style */
+.card-dots .dot.fun-fact-dot {
+  background: #fbbf24;
+}
+
+.card-dots .dot.fun-fact-dot.active {
+  background: #f59e0b;
+}
+
 .info-card::after {
   content: '';
   position: absolute;
@@ -375,39 +459,6 @@ body {
 
 .card-close:hover {
   background: #e2e8f0;
-}
-
-.card-period {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--electric-blue);
-  letter-spacing: 0.08em;
-  margin-bottom: 4px;
-}
-
-.card-title {
-  font-size: 18px;
-  font-weight: 600;
-  color: var(--text-dark);
-  margin-bottom: 6px;
-  padding-right: 36px;
-  line-height: 1.3;
-}
-
-.card-layer-label {
-  font-size: 10px;
-  font-weight: 500;
-  color: var(--text-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  margin-bottom: 10px;
-}
-
-.card-desc {
-  font-size: 14px;
-  color: var(--text-body);
-  line-height: 1.6;
-  margin-bottom: 16px;
 }
 
 .card-nav {

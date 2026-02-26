@@ -505,12 +505,14 @@ function App() {
           const userIcon = L.divIcon({
             className: 'user-marker-container',
             html: '<div class="user-dot"></div>',
-            iconSize: [40, 40],
-            iconAnchor: [20, 20]
+            iconSize: [50, 50],
+            iconAnchor: [25, 25]
           })
           
-          userMarkerRef.current = L.marker(userLatLng, { icon: userIcon })
-            .addTo(mapInstance.current!) as unknown as L.CircleMarker
+          userMarkerRef.current = L.marker(userLatLng, { 
+            icon: userIcon,
+            zIndexOffset: 1000  // Ensure user marker is on top
+          }).addTo(mapInstance.current!) as unknown as L.CircleMarker
           
           // Always center on user
           mapInstance.current?.setView(userLatLng, 16)

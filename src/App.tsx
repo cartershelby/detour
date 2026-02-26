@@ -201,10 +201,27 @@ function App() {
   const userLocationRef = useRef<[number, number] | null>(null)
   
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
-  const [unlockedIds, setUnlockedIds] = useState<string[]>([])
+  const [unlockedIds, setUnlockedIds] = useState<string[]>(() => {
+    // Load saved progress from localStorage
+    try {
+      const saved = localStorage.getItem('detour-unlocked')
+      return saved ? JSON.parse(saved) : []
+    } catch {
+      return []
+    }
+  })
   const [infoLayer, setInfoLayer] = useState(0)
   const [showSplash, setShowSplash] = useState(true)
   const [fadeOut, setFadeOut] = useState(false)
+
+  // Save progress to localStorage whenever unlocked locations change
+  useEffect(() => {
+    try {
+      localStorage.setItem('detour-unlocked', JSON.stringify(unlockedIds))
+    } catch {
+      // Ignore storage errors
+    }
+  }, [unlockedIds])
 
   // Get pin size based on zoom level
   const getPinSize = useCallback((zoom: number) => {
@@ -216,15 +233,20 @@ function App() {
     return 12
   }, [])
 
-  // Update which locations are unlocked based on user position
+  // Update which locations are unlocked based on user position (merges with existing)
   const updateUnlockedLocations = useCallback((userLat: number, userLng: number) => {
-    const newUnlocked = LOCATIONS
+    const nearbyIds = LOCATIONS
       .filter(loc => {
         const dist = getDistanceMeters(userLat, userLng, loc.coordinates[1], loc.coordinates[0])
         return dist <= UNLOCK_RADIUS
       })
       .map(loc => loc.id)
-    setUnlockedIds(newUnlocked)
+    
+    // Merge with existing unlocked (don't remove previously unlocked)
+    setUnlockedIds(prev => {
+      const merged = new Set([...prev, ...nearbyIds])
+      return Array.from(merged)
+    })
   }, [])
 
   // Update marker icons based on unlock state and zoom

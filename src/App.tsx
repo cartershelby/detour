@@ -108,7 +108,7 @@ const createPinIcon = (size: number = 24) => {
   })
 }
 
-// Create locked location marker (rounded box)
+// Create locked location marker (rounded box - light blue)
 const createLockedPinIcon = (size: number = 24) => {
   const boxSize = size * 0.8
   return L.divIcon({
@@ -117,8 +117,8 @@ const createLockedPinIcon = (size: number = 24) => {
       <div style="
         width: ${boxSize}px;
         height: ${boxSize}px;
-        background: rgba(148, 163, 184, 0.15);
-        border: 2px solid rgba(148, 163, 184, 0.4);
+        background: rgba(0, 128, 255, 0.1);
+        border: 2px solid rgba(0, 128, 255, 0.3);
         border-radius: 6px;
         display: flex;
         align-items: center;
@@ -280,9 +280,18 @@ function App() {
     // Load saved progress from localStorage
     try {
       const saved = localStorage.getItem('detour-unlocked')
-      return saved ? JSON.parse(saved) : []
+      if (saved) {
+        const parsed = JSON.parse(saved)
+        // Ensure at least one location is unlocked for demo
+        if (!parsed.includes('nicolas-flamel')) {
+          parsed.push('nicolas-flamel')
+        }
+        return parsed
+      }
+      // Default: unlock first location for demo
+      return ['nicolas-flamel']
     } catch {
-      return []
+      return ['nicolas-flamel']
     }
   })
   const [infoLayer, setInfoLayer] = useState(0)

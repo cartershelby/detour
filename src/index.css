@@ -111,39 +111,36 @@ body {
   }
 }
 
-/* User location marker - small dot with large glow */
+/* User location marker - small dot with ~3x radius glow */
 .user-marker-container {
   background: none !important;
   border: none !important;
 }
 
 .user-dot {
-  width: 12px;
-  height: 12px;
+  width: 10px;
+  height: 10px;
   background: #10b981;
   border-radius: 50%;
   box-shadow: 
-    0 0 0 3px rgba(16, 185, 129, 0.3),
-    0 0 20px 10px rgba(16, 185, 129, 0.4),
-    0 0 40px 20px rgba(16, 185, 129, 0.3),
-    0 0 60px 30px rgba(16, 185, 129, 0.2);
+    0 0 8px 4px rgba(16, 185, 129, 0.6),
+    0 0 15px 8px rgba(16, 185, 129, 0.4),
+    0 0 25px 12px rgba(16, 185, 129, 0.2);
   animation: user-glow 3s ease-in-out infinite;
 }
 
 @keyframes user-glow {
   0%, 100% { 
     box-shadow: 
-      0 0 0 3px rgba(16, 185, 129, 0.3),
-      0 0 20px 10px rgba(16, 185, 129, 0.4),
-      0 0 40px 20px rgba(16, 185, 129, 0.3),
-      0 0 60px 30px rgba(16, 185, 129, 0.2);
+      0 0 8px 4px rgba(16, 185, 129, 0.5),
+      0 0 15px 8px rgba(16, 185, 129, 0.35),
+      0 0 25px 12px rgba(16, 185, 129, 0.15);
   }
   50% { 
     box-shadow: 
-      0 0 0 4px rgba(16, 185, 129, 0.4),
-      0 0 30px 15px rgba(16, 185, 129, 0.5),
-      0 0 60px 30px rgba(16, 185, 129, 0.35),
-      0 0 90px 45px rgba(16, 185, 129, 0.2);
+      0 0 10px 6px rgba(16, 185, 129, 0.7),
+      0 0 20px 10px rgba(16, 185, 129, 0.5),
+      0 0 30px 15px rgba(16, 185, 129, 0.25);
   }
 }
 

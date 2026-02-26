@@ -297,15 +297,16 @@ function App() {
           userLocationRef.current = userLatLng
           updateUnlockedLocations(userLatLng[0], userLatLng[1])
           
-          // Add user marker
-          userMarkerRef.current = L.circleMarker(userLatLng, {
-            radius: 5,
-            fillColor: '#10b981',
-            fillOpacity: 1,
-            color: '#10b981',
-            weight: 0,
-            className: 'user-marker'
-          }).addTo(mapInstance.current!)
+          // Add user marker using divIcon for proper glow effect
+          const userIcon = L.divIcon({
+            className: 'user-marker-container',
+            html: '<div class="user-dot"></div>',
+            iconSize: [16, 16],
+            iconAnchor: [8, 8]
+          })
+          
+          userMarkerRef.current = L.marker(userLatLng, { icon: userIcon })
+            .addTo(mapInstance.current!) as unknown as L.CircleMarker
           
           // Center on user if near Paris
           const distFromParis = Math.abs(userLatLng[0] - PARIS_CENTER[0]) + Math.abs(userLatLng[1] - PARIS_CENTER[1])

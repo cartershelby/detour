@@ -18,9 +18,41 @@ Choose a historically interesting place in the Marais (or nearby). Good candidat
 
 ## 3. Get an Image
 
-1. Find a good photo of the location (your own, Unsplash, or Wikimedia Commons)
-2. Save it to `public/images/` with a short descriptive name (e.g., `flamel.jpg`)
-3. Keep images around 640px wide, JPG format
+Find an accurate photo of the actual location (not a generic stock photo).
+
+**Best sources:**
+1. **Wikimedia Commons** — search for the location name, most have CC-licensed photos
+2. **Google Street View** — screenshot the facade (crop to just the building)
+3. **Your own photo** — if you visit the location
+
+**Download from Wikimedia Commons:**
+```bash
+# 1. Find the image on Commons (e.g., https://commons.wikimedia.org/wiki/File:Example.jpg)
+# 2. Get the direct URL from the file page
+# 3. Download with curl (full-size, then we'll note the size issue)
+curl -sL "https://upload.wikimedia.org/wikipedia/commons/X/XX/Filename.jpg" -o public/images/location-name.jpg
+```
+
+**Image requirements:**
+- **Accurate** — must show the actual building/location, not a generic Paris photo
+- **Target size** — ~100-200KB (resize if needed)
+- **Format** — JPG preferred
+- **Dimensions** — 640px wide is ideal
+
+**If the image is too large (>500KB):**
+```bash
+# Option 1: Use Wikimedia's thumbnail URL (add /thumb/ and size)
+curl -sL "https://upload.wikimedia.org/wikipedia/commons/thumb/X/XX/Filename.jpg/640px-Filename.jpg" -o public/images/location-name.jpg
+
+# Option 2: Resize locally with ImageMagick (if available)
+convert public/images/location-name.jpg -resize 640x -quality 85 public/images/location-name.jpg
+
+# Option 3: Use an online tool like squoosh.app to compress
+```
+
+**Naming convention:** lowercase, hyphenated, descriptive
+- ✅ `flamel.jpg`, `synagogue-pavee.jpg`, `place-des-vosges.jpg`
+- ❌ `IMG_1234.jpg`, `download.jpg`, `photo (1).jpg`
 
 ## 4. Add the Location Data
 

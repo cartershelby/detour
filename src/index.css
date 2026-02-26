@@ -379,6 +379,113 @@ body {
   margin-top: 4px;
 }
 
+/* Locked Location Card */
+.locked-card {
+  position: absolute;
+  top: 140px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: white;
+  border-radius: 20px;
+  padding: 24px;
+  width: calc(100% - 40px);
+  max-width: 340px;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+  z-index: 1000;
+  animation: card-enter 0.3s ease-out;
+  text-align: center;
+}
+
+.locked-icon {
+  font-size: 36px;
+  margin-bottom: 8px;
+}
+
+.locked-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 16px;
+}
+
+.locked-distance {
+  background: var(--bg-light);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 16px;
+}
+
+.distance-value {
+  display: block;
+  font-size: 24px;
+  font-weight: 600;
+  color: var(--electric-blue);
+  margin-bottom: 4px;
+}
+
+.distance-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.locked-teaser {
+  text-align: left;
+}
+
+.teaser-stats {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.teaser-stat {
+  flex: 1;
+  background: var(--bg-light);
+  border-radius: 10px;
+  padding: 12px;
+}
+
+.stat-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 4px;
+}
+
+.stat-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-dark);
+}
+
+.teaser-hint {
+  background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+  border-radius: 10px;
+  padding: 14px;
+  border-left: 3px solid var(--electric-blue);
+}
+
+.hint-label {
+  display: block;
+  font-size: 10px;
+  font-weight: 500;
+  color: var(--electric-blue);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 6px;
+}
+
+.teaser-hint p {
+  font-size: 13px;
+  color: var(--text-body);
+  line-height: 1.5;
+  margin: 0;
+  font-style: italic;
+}
+
 .nav-arrow {
   width: 36px;
   height: 36px;

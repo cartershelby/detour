@@ -8,6 +8,11 @@ interface Location {
   coordinates: [number, number]
   period: string
   shortDesc: string
+  teaser: {
+    era: string
+    category: string
+    hint: string
+  }
   layers: {
     description: string
     funFact: string
@@ -23,6 +28,11 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3549, 48.8619],
     period: '1407',
     shortDesc: "Paris's oldest stone house",
+    teaser: {
+      era: 'Medieval',
+      category: 'Architecture',
+      hint: 'A legendary figure from both history and fiction once lived here...'
+    },
     layers: {
       description: "Built by the legendary alchemist Nicolas Flamel — yes, the one from Harry Potter was based on a real person who lived right here in the Marais.",
       funFact: "Flamel was actually a successful scribe and manuscript dealer. The alchemy legends grew after his death when people noticed he had become mysteriously wealthy.",
@@ -36,6 +46,11 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3589, 48.8551],
     period: '1913',
     shortDesc: "Art Nouveau masterpiece by Guimard",
+    teaser: {
+      era: 'Belle Époque',
+      category: 'Religious',
+      hint: 'The architect who shaped the Paris Métro created something unexpected here...'
+    },
     layers: {
       description: "Designed by Hector Guimard, famous for those iconic Paris Métro entrances. This is one of the few Guimard buildings you can actually enter.",
       funFact: "Guimard married an American Jewish woman, which likely influenced his decision to design this synagogue — his only religious building ever.",
@@ -49,6 +64,11 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3617, 48.8574],
     period: '1580s',
     shortDesc: "16th-century mansion turned cultural haven",
+    teaser: {
+      era: 'Renaissance',
+      category: 'Cultural',
+      hint: 'A Nordic secret hides within these centuries-old walls...'
+    },
     layers: {
       description: "A Renaissance-era Marais mansion converted into a Swedish cultural center. The courtyard café serves exceptional fika (Swedish coffee break with pastries).",
       funFact: "The building was once owned by a tax collector who was murdered during the French Revolution. The Swedes acquired it in 1971.",
@@ -88,18 +108,27 @@ const createPinIcon = (size: number = 24) => {
   })
 }
 
-// Create locked/ghost pin icon
+// Create locked location marker (rounded box)
 const createLockedPinIcon = (size: number = 24) => {
+  const boxSize = size * 0.8
   return L.divIcon({
     className: 'custom-pin locked',
     html: `
-      <svg width="${size}" height="${size * 1.4}" viewBox="0 0 24 34" fill="none" opacity="0.3">
-        <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 22 12 22s12-13 12-22c0-6.627-5.373-12-12-12z" fill="#94a3b8"/>
-        <circle cx="12" cy="11" r="4.5" fill="white"/>
-      </svg>
+      <div style="
+        width: ${boxSize}px;
+        height: ${boxSize}px;
+        background: rgba(148, 163, 184, 0.15);
+        border: 2px solid rgba(148, 163, 184, 0.4);
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: ${boxSize * 0.5}px;
+        backdrop-filter: blur(4px);
+      ">🔒</div>
     `,
-    iconSize: [size, size * 1.4],
-    iconAnchor: [size / 2, size * 1.4],
+    iconSize: [boxSize, boxSize],
+    iconAnchor: [boxSize / 2, boxSize / 2],
   })
 }
 
@@ -135,6 +164,50 @@ function Logo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
       }}>
         obscura
       </span>
+    </div>
+  )
+}
+
+// Locked Location Card Component
+function LockedCard({ location, distance, onClose }: { 
+  location: Location
+  distance: number | null
+  onClose: () => void 
+}) {
+  const formatDistance = (d: number) => {
+    if (d < 1000) return `${Math.round(d)}m away`
+    return `${(d / 1000).toFixed(1)}km away`
+  }
+  
+  return (
+    <div className="locked-card">
+      <button className="card-close" onClick={onClose}>×</button>
+      <div className="locked-icon">🔒</div>
+      <div className="locked-title">Location Locked</div>
+      
+      {distance !== null && (
+        <div className="locked-distance">
+          <span className="distance-value">{formatDistance(distance)}</span>
+          <span className="distance-hint">Get within 150m to unlock</span>
+        </div>
+      )}
+      
+      <div className="locked-teaser">
+        <div className="teaser-stats">
+          <div className="teaser-stat">
+            <span className="stat-label">Era</span>
+            <span className="stat-value">{location.teaser.era}</span>
+          </div>
+          <div className="teaser-stat">
+            <span className="stat-label">Type</span>
+            <span className="stat-value">{location.teaser.category}</span>
+          </div>
+        </div>
+        <div className="teaser-hint">
+          <span className="hint-label">Hint</span>
+          <p>{location.teaser.hint}</p>
+        </div>
+      </div>
     </div>
   )
 }
@@ -201,6 +274,8 @@ function App() {
   const userLocationRef = useRef<[number, number] | null>(null)
   
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+  const [lockedLocation, setLockedLocation] = useState<Location | null>(null)
+  const [userPosition, setUserPosition] = useState<[number, number] | null>(null)
   const [unlockedIds, setUnlockedIds] = useState<string[]>(() => {
     // Load saved progress from localStorage
     try {
@@ -213,6 +288,12 @@ function App() {
   const [infoLayer, setInfoLayer] = useState(0)
   const [showSplash, setShowSplash] = useState(true)
   const [fadeOut, setFadeOut] = useState(false)
+
+  // Calculate distance to a location
+  const getDistanceToLocation = useCallback((loc: Location) => {
+    if (!userPosition) return null
+    return getDistanceMeters(userPosition[0], userPosition[1], loc.coordinates[1], loc.coordinates[0])
+  }, [userPosition])
 
   // Save progress to localStorage whenever unlocked locations change
   useEffect(() => {
@@ -294,12 +375,16 @@ function App() {
         .addTo(mapInstance.current!)
       
       marker.on('click', () => {
-        // Only allow click if unlocked
+        const latLng: [number, number] = [location.coordinates[1], location.coordinates[0]]
         if (unlockedIds.includes(location.id)) {
           setSelectedLocation(location)
+          setLockedLocation(null)
           setInfoLayer(0)
-          mapInstance.current?.setView(latLng, 17, { animate: true })
+        } else {
+          setLockedLocation(location)
+          setSelectedLocation(null)
         }
+        mapInstance.current?.setView(latLng, 17, { animate: true })
       })
       
       markersRef.current.set(location.id, marker)
@@ -317,6 +402,7 @@ function App() {
         (pos) => {
           const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
           userLocationRef.current = userLatLng
+          setUserPosition(userLatLng)
           updateUnlockedLocations(userLatLng[0], userLatLng[1])
           
           // Add user marker using divIcon for proper glow effect
@@ -345,6 +431,7 @@ function App() {
         (pos) => {
           const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
           userLocationRef.current = userLatLng
+          setUserPosition(userLatLng)
           userMarkerRef.current?.setLatLng(userLatLng)
           updateUnlockedLocations(userLatLng[0], userLatLng[1])
         },
@@ -460,10 +547,19 @@ function App() {
         />
       )}
 
+      {/* Locked Location Card */}
+      {lockedLocation && !showTracker && (
+        <LockedCard 
+          location={lockedLocation}
+          distance={getDistanceToLocation(lockedLocation)}
+          onClose={() => setLockedLocation(null)}
+        />
+      )}
+
       {/* Tap hint */}
-      {!selectedLocation && !showTracker && unlockedIds.length > 0 && (
+      {!selectedLocation && !lockedLocation && !showTracker && (
         <div className="tap-hint">
-          <span>Tap a glowing pin to explore</span>
+          <span>Tap any pin to explore</span>
         </div>
       )}
     </div>

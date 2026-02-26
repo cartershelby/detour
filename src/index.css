@@ -120,27 +120,27 @@ body {
 .user-dot {
   width: 10px;
   height: 10px;
-  background: #10b981;
+  background: #22c55e;
   border-radius: 50%;
   box-shadow: 
-    0 0 8px 4px rgba(16, 185, 129, 0.6),
-    0 0 15px 8px rgba(16, 185, 129, 0.4),
-    0 0 25px 12px rgba(16, 185, 129, 0.2);
+    0 0 8px 4px rgba(34, 197, 94, 0.6),
+    0 0 15px 8px rgba(34, 197, 94, 0.4),
+    0 0 25px 12px rgba(34, 197, 94, 0.2);
   animation: user-glow 3s ease-in-out infinite;
 }
 
 @keyframes user-glow {
   0%, 100% { 
     box-shadow: 
-      0 0 8px 4px rgba(16, 185, 129, 0.5),
-      0 0 15px 8px rgba(16, 185, 129, 0.35),
-      0 0 25px 12px rgba(16, 185, 129, 0.15);
+      0 0 8px 4px rgba(34, 197, 94, 0.5),
+      0 0 15px 8px rgba(34, 197, 94, 0.35),
+      0 0 25px 12px rgba(34, 197, 94, 0.15);
   }
   50% { 
     box-shadow: 
-      0 0 10px 6px rgba(16, 185, 129, 0.7),
-      0 0 20px 10px rgba(16, 185, 129, 0.5),
-      0 0 30px 15px rgba(16, 185, 129, 0.25);
+      0 0 10px 6px rgba(34, 197, 94, 0.7),
+      0 0 20px 10px rgba(34, 197, 94, 0.5),
+      0 0 30px 15px rgba(34, 197, 94, 0.25);
   }
 }
 

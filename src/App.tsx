@@ -32,7 +32,7 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3549, 48.8619],
     period: '1407',
     shortDesc: "Paris's oldest stone house",
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Maison_de_Nicolas_Flamel%2C_Paris_2010.jpg/640px-Maison_de_Nicolas_Flamel%2C_Paris_2010.jpg',
+    image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=640&q=80',
     teaser: {
       era: 'Medieval',
       category: 'Architecture',
@@ -43,25 +43,25 @@ const LOCATIONS: Location[] = [
         year: '1407',
         title: 'Construction',
         description: "Nicolas Flamel builds this house as a hostel for the poor. Lodgers were required to pray for the souls of Flamel and his wife Perenelle.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/8/86/Maison_Nicolas_Flamel_Paris.jpg/640px-Maison_Nicolas_Flamel_Paris.jpg'
+        image: 'https://images.unsplash.com/photo-1568684333877-4d3e69e39a21?w=640&q=80'
       },
       {
         year: '1418',
         title: "Flamel's Death",
         description: "Flamel dies wealthy, sparking rumors of alchemy. He was actually a successful scribe and manuscript dealer — the alchemy legends grew posthumously.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/c/c3/Nicolas_Flamel.png/400px-Nicolas_Flamel.png'
+        image: 'https://images.unsplash.com/photo-1461360370896-922624d12a74?w=640&q=80'
       },
       {
         year: '1900s',
         title: 'Rediscovery',
         description: "The building is recognized as Paris's oldest stone house. The carved inscriptions on the facade, worn but visible, become a tourist attraction.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/a2/Maison_de_Nicolas_Flamel%2C_Paris_2010.jpg/640px-Maison_de_Nicolas_Flamel%2C_Paris_2010.jpg'
+        image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=640&q=80'
       },
       {
         year: '1997',
         title: 'Potter Fame',
         description: "J.K. Rowling includes Nicolas Flamel in Harry Potter. Suddenly the real Flamel's house sees a new wave of visitors seeking the Philosopher's Stone.",
-        image: 'https://upload.wikimedia.org/wikipedia/en/6/6b/Harry_Potter_and_the_Philosopher%27s_Stone_Book_Cover.jpg'
+        image: 'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=640&q=80'
       }
     ],
     funFact: "The carved inscriptions on the facade were instructions for the poor lodgers — medieval terms of service, essentially."
@@ -72,7 +72,7 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3589, 48.8551],
     period: '1913',
     shortDesc: "Art Nouveau masterpiece by Guimard",
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Synagogue_10_rue_Pav%C3%A9e_Paris.jpg/640px-Synagogue_10_rue_Pav%C3%A9e_Paris.jpg',
+    image: 'https://images.unsplash.com/photo-1555992336-03a23c7b20ee?w=640&q=80',
     teaser: {
       era: 'Belle Époque',
       category: 'Religious',
@@ -83,25 +83,25 @@ const LOCATIONS: Location[] = [
         year: '1913',
         title: 'Construction',
         description: "Hector Guimard, famous for Paris Métro entrances, designs this synagogue — his only religious building. The undulating concrete facade was revolutionary.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/d/d1/Synagogue_10_rue_Pav%C3%A9e_Paris.jpg/640px-Synagogue_10_rue_Pav%C3%A9e_Paris.jpg'
+        image: 'https://images.unsplash.com/photo-1555992336-03a23c7b20ee?w=640&q=80'
       },
       {
         year: '1940',
         title: 'Nazi Occupation',
         description: "During WWII, the synagogue is damaged but survives. The Marais Jewish community faces deportation; many never return.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/42/Bundesarchiv_Bild_101I-027-1476-21A%2C_Marseille%2C_Deportation_von_Juden.jpg/640px-Bundesarchiv_Bild_101I-027-1476-21A%2C_Marseille%2C_Deportation_von_Juden.jpg'
+        image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=640&q=80'
       },
       {
         year: '1945',
         title: 'Liberation',
         description: "The synagogue reopens after the war. It becomes a symbol of the resilient Pletzl (Jewish quarter) community.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7e/Crowds_of_French_patriots_line_the_Champs_Elysees-edit2.jpg/640px-Crowds_of_French_patriots_line_the_Champs_Elysees-edit2.jpg'
+        image: 'https://images.unsplash.com/photo-1549877452-9c387954fbc2?w=640&q=80'
       },
       {
         year: '2019',
         title: 'Restoration',
         description: "Major restoration preserves Guimard's Art Nouveau details. The building is now one of the few Guimard interiors open to visitors.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5c/Synagogue_rue_Pavee_interior.jpg/640px-Synagogue_rue_Pavee_interior.jpg'
+        image: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=640&q=80'
       }
     ],
     funFact: "Guimard married an American Jewish woman — likely the reason he took this unusual commission."
@@ -112,7 +112,7 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3617, 48.8574],
     period: '1580s',
     shortDesc: "16th-century mansion turned cultural haven",
-    image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/H%C3%B4tel_de_Marle_cour.jpg/640px-H%C3%B4tel_de_Marle_cour.jpg',
+    image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=640&q=80',
     teaser: {
       era: 'Renaissance',
       category: 'Cultural',
@@ -123,25 +123,25 @@ const LOCATIONS: Location[] = [
         year: '1580s',
         title: 'Construction',
         description: "Hôtel de Marle is built as a Renaissance mansion. The stunning courtyard survives centuries of Parisian transformation largely intact.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7c/H%C3%B4tel_de_Marle_cour.jpg/640px-H%C3%B4tel_de_Marle_cour.jpg'
+        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=640&q=80'
       },
       {
         year: '1789',
         title: 'Revolution',
         description: "The owner, a tax collector, is murdered during the French Revolution. The building passes through various hands.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5d/Prise_de_la_Bastille.jpg/640px-Prise_de_la_Bastille.jpg'
+        image: 'https://images.unsplash.com/photo-1564769662533-4f00a87b4056?w=640&q=80'
       },
       {
         year: '1971',
         title: 'Swedish Acquisition',
         description: "Sweden acquires the building and transforms it into a cultural center. A courtyard café introduces Parisians to fika.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/4/4c/Flag_of_Sweden.svg/640px-Flag_of_Sweden.svg.png'
+        image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=640&q=80'
       },
       {
         year: 'Today',
         title: 'Cultural Hub',
         description: "The café serves exceptional cinnamon buns and coffee. It's a hidden oasis where Swedish and French cultures blend.",
-        image: 'https://upload.wikimedia.org/wikipedia/commons/thumb/e/e3/Kanelbulle.jpg/640px-Kanelbulle.jpg'
+        image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=640&q=80'
       }
     ],
     funFact: "Fika isn't just a coffee break — it's a Swedish philosophy of slowing down and connecting with others."

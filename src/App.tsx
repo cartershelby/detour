@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import L from 'leaflet'
 import 'leaflet/dist/leaflet.css'
 
@@ -60,19 +60,46 @@ const LOCATIONS: Location[] = [
 
 const PARIS_CENTER: [number, number] = [48.8590, 2.3580]
 const ELECTRIC_BLUE = '#0080FF'
+const UNLOCK_RADIUS = 150 // meters
 
-// SVG Pin Icon for markers
-const createPinIcon = () => {
+// Calculate distance between two points in meters
+function getDistanceMeters(lat1: number, lng1: number, lat2: number, lng2: number): number {
+  const R = 6371000
+  const φ1 = lat1 * Math.PI / 180
+  const φ2 = lat2 * Math.PI / 180
+  const Δφ = (lat2 - lat1) * Math.PI / 180
+  const Δλ = (lng2 - lng1) * Math.PI / 180
+  const a = Math.sin(Δφ / 2) ** 2 + Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) ** 2
+  return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
+}
+
+// Create pin icon with dynamic size
+const createPinIcon = (size: number = 24) => {
   return L.divIcon({
     className: 'custom-pin',
     html: `
-      <svg width="32" height="44" viewBox="0 0 24 34" fill="none" style="filter: drop-shadow(0 0 10px rgba(0, 128, 255, 0.7));">
+      <svg width="${size}" height="${size * 1.4}" viewBox="0 0 24 34" fill="none">
         <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 22 12 22s12-13 12-22c0-6.627-5.373-12-12-12z" fill="${ELECTRIC_BLUE}"/>
         <circle cx="12" cy="11" r="4.5" fill="white"/>
       </svg>
     `,
-    iconSize: [32, 44],
-    iconAnchor: [16, 44],
+    iconSize: [size, size * 1.4],
+    iconAnchor: [size / 2, size * 1.4],
+  })
+}
+
+// Create locked/ghost pin icon
+const createLockedPinIcon = (size: number = 24) => {
+  return L.divIcon({
+    className: 'custom-pin locked',
+    html: `
+      <svg width="${size}" height="${size * 1.4}" viewBox="0 0 24 34" fill="none" opacity="0.3">
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 22 12 22s12-13 12-22c0-6.627-5.373-12-12-12z" fill="#94a3b8"/>
+        <circle cx="12" cy="11" r="4.5" fill="white"/>
+      </svg>
+    `,
+    iconSize: [size, size * 1.4],
+    iconAnchor: [size / 2, size * 1.4],
   })
 }
 
@@ -141,7 +168,6 @@ function InfoCard({ location, layer, onClose, onPrev, onNext }: {
       <div className="card-layer-label">{layerLabels[layer]}</div>
       <div className="card-desc">{currentContent}</div>
       
-      {/* Navigation arrows */}
       <div className="card-nav">
         <button 
           className={`nav-arrow ${!hasPrev ? 'disabled' : ''}`} 
@@ -172,11 +198,43 @@ function App() {
   const mapInstance = useRef<L.Map | null>(null)
   const markersRef = useRef<Map<string, L.Marker>>(new Map())
   const userMarkerRef = useRef<L.CircleMarker | null>(null)
+  const userLocationRef = useRef<[number, number] | null>(null)
   
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
+  const [unlockedIds, setUnlockedIds] = useState<string[]>([])
   const [infoLayer, setInfoLayer] = useState(0)
   const [showSplash, setShowSplash] = useState(true)
   const [fadeOut, setFadeOut] = useState(false)
+
+  // Get pin size based on zoom level
+  const getPinSize = useCallback((zoom: number) => {
+    if (zoom >= 18) return 28
+    if (zoom >= 17) return 24
+    if (zoom >= 16) return 20
+    if (zoom >= 15) return 16
+    if (zoom >= 14) return 14
+    return 12
+  }, [])
+
+  // Update which locations are unlocked based on user position
+  const updateUnlockedLocations = useCallback((userLat: number, userLng: number) => {
+    const newUnlocked = LOCATIONS
+      .filter(loc => {
+        const dist = getDistanceMeters(userLat, userLng, loc.coordinates[1], loc.coordinates[0])
+        return dist <= UNLOCK_RADIUS
+      })
+      .map(loc => loc.id)
+    setUnlockedIds(newUnlocked)
+  }, [])
+
+  // Update marker icons based on unlock state and zoom
+  const updateMarkers = useCallback((zoom: number) => {
+    const size = getPinSize(zoom)
+    markersRef.current.forEach((marker, id) => {
+      const isUnlocked = unlockedIds.includes(id)
+      marker.setIcon(isUnlocked ? createPinIcon(size) : createLockedPinIcon(size))
+    })
+  }, [unlockedIds, getPinSize])
 
   // Splash screen with slow fade
   useEffect(() => {
@@ -192,9 +250,10 @@ function App() {
   useEffect(() => {
     if (!mapRef.current || mapInstance.current || showSplash) return
 
+    const initialZoom = 16
     mapInstance.current = L.map(mapRef.current, {
       center: PARIS_CENTER,
-      zoom: 16,
+      zoom: initialZoom,
       zoomControl: false
     })
 
@@ -205,19 +264,29 @@ function App() {
 
     L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current)
 
-    // Add location markers
+    // Add location markers (all start as locked/ghost)
+    const initialSize = getPinSize(initialZoom)
     LOCATIONS.forEach(location => {
       const latLng: [number, number] = [location.coordinates[1], location.coordinates[0]]
-      const marker = L.marker(latLng, { icon: createPinIcon() })
+      const marker = L.marker(latLng, { icon: createLockedPinIcon(initialSize) })
         .addTo(mapInstance.current!)
       
       marker.on('click', () => {
-        setSelectedLocation(location)
-        setInfoLayer(0)
-        mapInstance.current?.setView(latLng, 17, { animate: true })
+        // Only allow click if unlocked
+        if (unlockedIds.includes(location.id)) {
+          setSelectedLocation(location)
+          setInfoLayer(0)
+          mapInstance.current?.setView(latLng, 17, { animate: true })
+        }
       })
       
       markersRef.current.set(location.id, marker)
+    })
+
+    // Update marker sizes on zoom
+    mapInstance.current.on('zoomend', () => {
+      const zoom = mapInstance.current?.getZoom() || 16
+      updateMarkers(zoom)
     })
 
     // Get user location
@@ -225,8 +294,10 @@ function App() {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
+          userLocationRef.current = userLatLng
+          updateUnlockedLocations(userLatLng[0], userLatLng[1])
           
-          // Add user marker - small solid dot with large glow
+          // Add user marker
           userMarkerRef.current = L.circleMarker(userLatLng, {
             radius: 5,
             fillColor: '#10b981',
@@ -236,13 +307,13 @@ function App() {
             className: 'user-marker'
           }).addTo(mapInstance.current!)
           
-          // Center on user if they're near Paris
+          // Center on user if near Paris
           const distFromParis = Math.abs(userLatLng[0] - PARIS_CENTER[0]) + Math.abs(userLatLng[1] - PARIS_CENTER[1])
           if (distFromParis < 0.5) {
             mapInstance.current?.setView(userLatLng, 16)
           }
         },
-        () => {}, // Ignore errors silently
+        () => {},
         { enableHighAccuracy: true, timeout: 10000 }
       )
 
@@ -250,7 +321,9 @@ function App() {
       navigator.geolocation.watchPosition(
         (pos) => {
           const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
+          userLocationRef.current = userLatLng
           userMarkerRef.current?.setLatLng(userLatLng)
+          updateUnlockedLocations(userLatLng[0], userLatLng[1])
         },
         () => {},
         { enableHighAccuracy: true }
@@ -261,7 +334,15 @@ function App() {
       mapInstance.current?.remove()
       mapInstance.current = null
     }
-  }, [showSplash])
+  }, [showSplash, getPinSize, updateUnlockedLocations])
+
+  // Update markers when unlocked state changes
+  useEffect(() => {
+    if (mapInstance.current) {
+      const zoom = mapInstance.current.getZoom() || 16
+      updateMarkers(zoom)
+    }
+  }, [unlockedIds, updateMarkers])
 
   const handleCloseCard = () => {
     setSelectedLocation(null)
@@ -293,6 +374,11 @@ function App() {
         <div className="header-logo">
           <Logo size="sm" />
         </div>
+        <div className="status-badge">
+          {unlockedIds.length > 0 
+            ? `${unlockedIds.length} unlocked` 
+            : 'Get closer to discover'}
+        </div>
       </div>
 
       {/* Floating Info Card */}
@@ -307,9 +393,9 @@ function App() {
       )}
 
       {/* Tap hint */}
-      {!selectedLocation && (
+      {!selectedLocation && unlockedIds.length > 0 && (
         <div className="tap-hint">
-          <span>Tap a pin to explore</span>
+          <span>Tap a glowing pin to explore</span>
         </div>
       )}
     </div>

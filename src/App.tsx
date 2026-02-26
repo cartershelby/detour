@@ -171,6 +171,7 @@ function App() {
   const mapRef = useRef<HTMLDivElement>(null)
   const mapInstance = useRef<L.Map | null>(null)
   const markersRef = useRef<Map<string, L.Marker>>(new Map())
+  const userMarkerRef = useRef<L.CircleMarker | null>(null)
   
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [infoLayer, setInfoLayer] = useState(0)
@@ -204,7 +205,7 @@ function App() {
 
     L.control.zoom({ position: 'bottomright' }).addTo(mapInstance.current)
 
-    // Add markers
+    // Add location markers
     LOCATIONS.forEach(location => {
       const latLng: [number, number] = [location.coordinates[1], location.coordinates[0]]
       const marker = L.marker(latLng, { icon: createPinIcon() })
@@ -218,6 +219,43 @@ function App() {
       
       markersRef.current.set(location.id, marker)
     })
+
+    // Get user location
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
+          
+          // Add user marker - green pulsing dot
+          userMarkerRef.current = L.circleMarker(userLatLng, {
+            radius: 8,
+            fillColor: '#10b981',
+            fillOpacity: 1,
+            color: 'white',
+            weight: 3,
+            className: 'user-marker'
+          }).addTo(mapInstance.current!)
+          
+          // Center on user if they're near Paris
+          const distFromParis = Math.abs(userLatLng[0] - PARIS_CENTER[0]) + Math.abs(userLatLng[1] - PARIS_CENTER[1])
+          if (distFromParis < 0.5) {
+            mapInstance.current?.setView(userLatLng, 16)
+          }
+        },
+        () => {}, // Ignore errors silently
+        { enableHighAccuracy: true, timeout: 10000 }
+      )
+
+      // Watch position for updates
+      navigator.geolocation.watchPosition(
+        (pos) => {
+          const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
+          userMarkerRef.current?.setLatLng(userLatLng)
+        },
+        () => {},
+        { enableHighAccuracy: true }
+      )
+    }
 
     return () => {
       mapInstance.current?.remove()

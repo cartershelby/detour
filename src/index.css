@@ -90,6 +90,20 @@ body {
   }
 }
 
+/* User location marker */
+.user-marker {
+  animation: user-pulse 2s ease-in-out infinite;
+}
+
+@keyframes user-pulse {
+  0%, 100% { 
+    box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4);
+  }
+  50% { 
+    box-shadow: 0 0 0 12px rgba(16, 185, 129, 0);
+  }
+}
+
 /* Floating Info Card */
 .info-card {
   position: absolute;

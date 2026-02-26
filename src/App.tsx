@@ -469,6 +469,45 @@ function App() {
 
   const [showTracker, setShowTracker] = useState(false)
 
+  // Calculate nearest locked location
+  const getNearestLocked = useCallback(() => {
+    if (!userPosition) return null
+    const lockedLocations = LOCATIONS.filter(loc => !unlockedIds.includes(loc.id))
+    if (lockedLocations.length === 0) return null
+    
+    let nearest = lockedLocations[0]
+    let nearestDist = getDistanceMeters(userPosition[0], userPosition[1], nearest.coordinates[1], nearest.coordinates[0])
+    
+    for (const loc of lockedLocations) {
+      const dist = getDistanceMeters(userPosition[0], userPosition[1], loc.coordinates[1], loc.coordinates[0])
+      if (dist < nearestDist) {
+        nearest = loc
+        nearestDist = dist
+      }
+    }
+    
+    return { location: nearest, distance: nearestDist }
+  }, [userPosition, unlockedIds])
+
+  const nearestLocked = getNearestLocked()
+
+  // Format distance for display
+  const formatDistance = (d: number) => {
+    if (d < 1000) return `${Math.round(d)}m`
+    return `${(d / 1000).toFixed(1)}km`
+  }
+
+  // Status badge text
+  const getStatusText = () => {
+    if (unlockedIds.length === LOCATIONS.length) {
+      return '✨ All discovered!'
+    }
+    if (nearestLocked && userPosition) {
+      return `${formatDistance(nearestLocked.distance)} to nearest`
+    }
+    return `${unlockedIds.length}/${LOCATIONS.length} discovered`
+  }
+
   if (showSplash) {
     return (
       <div className={`splash ${fadeOut ? 'fade-out' : ''}`}>
@@ -490,7 +529,7 @@ function App() {
           className="status-badge" 
           onClick={() => setShowTracker(!showTracker)}
         >
-          {unlockedIds.length}/{LOCATIONS.length} discovered
+          {getStatusText()}
         </button>
       </div>
 

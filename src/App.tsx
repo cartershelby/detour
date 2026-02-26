@@ -93,15 +93,19 @@ function getDistanceMeters(lat1: number, lng1: number, lat2: number, lng2: numbe
   return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a))
 }
 
-// Create pin icon with dynamic size
+// Collected/unlocked pin - with checkmark badge
 const createPinIcon = (size: number = 24) => {
   return L.divIcon({
-    className: 'custom-pin',
+    className: 'custom-pin collected',
     html: `
-      <svg width="${size}" height="${size * 1.4}" viewBox="0 0 24 34" fill="none">
-        <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 22 12 22s12-13 12-22c0-6.627-5.373-12-12-12z" fill="${ELECTRIC_BLUE}"/>
-        <circle cx="12" cy="11" r="4.5" fill="white"/>
-      </svg>
+      <div class="collected-marker">
+        <svg width="${size}" height="${size * 1.4}" viewBox="0 0 24 34" fill="none">
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 9 12 22 12 22s12-13 12-22c0-6.627-5.373-12-12-12z" fill="${ELECTRIC_BLUE}"/>
+          <circle cx="12" cy="11" r="5" fill="white"/>
+          <path d="M9 11l2 2 4-4" stroke="${ELECTRIC_BLUE}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <div class="collected-check">✓</div>
+      </div>
     `,
     iconSize: [size, size * 1.4],
     iconAnchor: [size / 2, size * 1.4],
@@ -380,8 +384,10 @@ function App() {
     const initialSize = getPinSize(initialZoom)
     LOCATIONS.forEach(location => {
       const latLng: [number, number] = [location.coordinates[1], location.coordinates[0]]
-      const marker = L.marker(latLng, { icon: createLockedPinIcon(initialSize) })
-        .addTo(mapInstance.current!)
+      const isUnlocked = unlockedIds.includes(location.id)
+      const marker = L.marker(latLng, { 
+        icon: isUnlocked ? createPinIcon(initialSize) : createLockedPinIcon(initialSize) 
+      }).addTo(mapInstance.current!)
       
       marker.on('click', () => {
         const latLng: [number, number] = [location.coordinates[1], location.coordinates[0]]
@@ -453,7 +459,7 @@ function App() {
       mapInstance.current?.remove()
       mapInstance.current = null
     }
-  }, [showSplash, getPinSize, updateUnlockedLocations])
+  }, [showSplash, getPinSize, updateUnlockedLocations, unlockedIds])
 
   // Update markers when unlocked state changes
   useEffect(() => {
@@ -565,6 +571,7 @@ function App() {
                   onClick={() => {
                     if (isUnlocked) {
                       setSelectedLocation(loc)
+                      setLockedLocation(null)
                       setInfoLayer(0)
                       setShowTracker(false)
                       const latLng: [number, number] = [loc.coordinates[1], loc.coordinates[0]]
@@ -572,7 +579,7 @@ function App() {
                     }
                   }}
                 >
-                  <div className="tracker-icon">{isUnlocked ? '📍' : '🔒'}</div>
+                  <div className="tracker-icon">{isUnlocked ? '✓' : '🔒'}</div>
                   <div className="tracker-info">
                     <div className="tracker-name">{isUnlocked ? loc.name : '???'}</div>
                     <div className="tracker-period">{isUnlocked ? loc.period : 'Undiscovered'}</div>

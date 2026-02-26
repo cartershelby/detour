@@ -188,9 +188,25 @@ body {
 }
 
 .tracker-icon {
-  font-size: 20px;
+  font-size: 16px;
   width: 32px;
-  text-align: center;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+}
+
+.tracker-item.unlocked .tracker-icon {
+  background: #22c55e;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+.tracker-item.locked .tracker-icon {
+  background: var(--bg-light);
+  font-size: 14px;
 }
 
 .tracker-info {
@@ -215,21 +231,44 @@ body {
 
 /* Custom Pin Marker */
 .custom-pin {
-  background: none;
-  border: none;
+  background: none !important;
+  border: none !important;
 }
 
 .custom-pin svg {
   transition: transform 0.2s, filter 0.2s;
 }
 
-.custom-pin:not(.locked) svg {
+.custom-pin.collected svg {
   animation: pulse-glow 2.5s ease-in-out infinite;
   cursor: pointer;
 }
 
-.custom-pin.locked svg {
-  cursor: not-allowed;
+.custom-pin.locked {
+  cursor: pointer;
+}
+
+/* Collected marker with checkmark badge */
+.collected-marker {
+  position: relative;
+}
+
+.collected-check {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  width: 16px;
+  height: 16px;
+  background: #22c55e;
+  color: white;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid white;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
 }
 
 @keyframes pulse-glow {

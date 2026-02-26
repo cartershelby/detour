@@ -380,6 +380,8 @@ function App() {
     setInfoLayer(prev => prev + 1)
   }
 
+  const [showTracker, setShowTracker] = useState(false)
+
   if (showSplash) {
     return (
       <div className={`splash ${fadeOut ? 'fade-out' : ''}`}>
@@ -397,15 +399,58 @@ function App() {
         <div className="header-logo">
           <Logo size="sm" />
         </div>
-        <div className="status-badge">
-          {unlockedIds.length > 0 
-            ? `${unlockedIds.length} unlocked` 
-            : 'Get closer to discover'}
-        </div>
+        <button 
+          className="status-badge" 
+          onClick={() => setShowTracker(!showTracker)}
+        >
+          {unlockedIds.length}/{LOCATIONS.length} discovered
+        </button>
       </div>
 
+      {/* Progress Tracker Panel */}
+      {showTracker && (
+        <div className="tracker-panel">
+          <div className="tracker-header">
+            <h3>Your Discoveries</h3>
+            <button className="tracker-close" onClick={() => setShowTracker(false)}>×</button>
+          </div>
+          <div className="tracker-progress">
+            <div 
+              className="tracker-bar" 
+              style={{ width: `${(unlockedIds.length / LOCATIONS.length) * 100}%` }}
+            />
+          </div>
+          <div className="tracker-list">
+            {LOCATIONS.map(loc => {
+              const isUnlocked = unlockedIds.includes(loc.id)
+              return (
+                <div 
+                  key={loc.id} 
+                  className={`tracker-item ${isUnlocked ? 'unlocked' : 'locked'}`}
+                  onClick={() => {
+                    if (isUnlocked) {
+                      setSelectedLocation(loc)
+                      setInfoLayer(0)
+                      setShowTracker(false)
+                      const latLng: [number, number] = [loc.coordinates[1], loc.coordinates[0]]
+                      mapInstance.current?.setView(latLng, 17, { animate: true })
+                    }
+                  }}
+                >
+                  <div className="tracker-icon">{isUnlocked ? '📍' : '🔒'}</div>
+                  <div className="tracker-info">
+                    <div className="tracker-name">{isUnlocked ? loc.name : '???'}</div>
+                    <div className="tracker-period">{isUnlocked ? loc.period : 'Undiscovered'}</div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      )}
+
       {/* Floating Info Card */}
-      {selectedLocation && (
+      {selectedLocation && !showTracker && (
         <InfoCard 
           location={selectedLocation}
           layer={infoLayer}
@@ -416,7 +461,7 @@ function App() {
       )}
 
       {/* Tap hint */}
-      {!selectedLocation && unlockedIds.length > 0 && (
+      {!selectedLocation && !showTracker && unlockedIds.length > 0 && (
         <div className="tap-hint">
           <span>Tap a glowing pin to explore</span>
         </div>

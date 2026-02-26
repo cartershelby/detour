@@ -79,6 +79,138 @@ body {
   font-weight: 500;
   color: var(--text-body);
   pointer-events: auto;
+  border: none;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.status-badge:hover {
+  transform: scale(1.02);
+  box-shadow: 0 6px 28px rgba(0,0,0,0.12);
+}
+
+/* Progress Tracker Panel */
+.tracker-panel {
+  position: absolute;
+  top: 110px;
+  right: 16px;
+  background: white;
+  border-radius: 20px;
+  padding: 20px;
+  width: 280px;
+  max-height: 60vh;
+  overflow-y: auto;
+  box-shadow: 0 12px 48px rgba(0,0,0,0.15);
+  z-index: 1001;
+  animation: slide-in 0.25s ease-out;
+}
+
+@keyframes slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.tracker-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.tracker-header h3 {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin: 0;
+}
+
+.tracker-close {
+  width: 28px;
+  height: 28px;
+  border: none;
+  background: var(--bg-light);
+  border-radius: 50%;
+  font-size: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.tracker-progress {
+  height: 6px;
+  background: var(--bg-light);
+  border-radius: 3px;
+  margin-bottom: 16px;
+  overflow: hidden;
+}
+
+.tracker-bar {
+  height: 100%;
+  background: var(--electric-blue);
+  border-radius: 3px;
+  transition: width 0.5s ease-out;
+}
+
+.tracker-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.tracker-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 12px;
+  transition: background 0.2s;
+}
+
+.tracker-item.unlocked {
+  background: var(--bg-light);
+  cursor: pointer;
+}
+
+.tracker-item.unlocked:hover {
+  background: #e8f4fc;
+}
+
+.tracker-item.locked {
+  opacity: 0.5;
+}
+
+.tracker-icon {
+  font-size: 20px;
+  width: 32px;
+  text-align: center;
+}
+
+.tracker-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.tracker-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-dark);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.tracker-period {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 2px;
 }
 
 /* Custom Pin Marker */

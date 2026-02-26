@@ -32,7 +32,7 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3549, 48.8619],
     period: '1407',
     shortDesc: "Paris's oldest stone house",
-    image: 'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?w=640&q=80',
+    image: './images/flamel.jpg',
     teaser: {
       era: 'Medieval',
       category: 'Architecture',
@@ -42,26 +42,22 @@ const LOCATIONS: Location[] = [
       {
         year: '1407',
         title: 'Construction',
-        description: "Nicolas Flamel builds this house as a hostel for the poor. Lodgers were required to pray for the souls of Flamel and his wife Perenelle.",
-        image: 'https://images.unsplash.com/photo-1568684333877-4d3e69e39a21?w=640&q=80'
+        description: "Nicolas Flamel builds this house as a hostel for the poor. Lodgers were required to pray for the souls of Flamel and his wife Perenelle."
       },
       {
         year: '1418',
         title: "Flamel's Death",
-        description: "Flamel dies wealthy, sparking rumors of alchemy. He was actually a successful scribe and manuscript dealer — the alchemy legends grew posthumously.",
-        image: 'https://images.unsplash.com/photo-1461360370896-922624d12a74?w=640&q=80'
+        description: "Flamel dies wealthy, sparking rumors of alchemy. He was actually a successful scribe and manuscript dealer — the alchemy legends grew posthumously."
       },
       {
         year: '1900s',
         title: 'Rediscovery',
-        description: "The building is recognized as Paris's oldest stone house. The carved inscriptions on the facade, worn but visible, become a tourist attraction.",
-        image: 'https://images.unsplash.com/photo-1499856871958-5b9627545d1a?w=640&q=80'
+        description: "The building is recognized as Paris's oldest stone house. The carved inscriptions on the facade, worn but visible, become a tourist attraction."
       },
       {
         year: '1997',
         title: 'Potter Fame',
-        description: "J.K. Rowling includes Nicolas Flamel in Harry Potter. Suddenly the real Flamel's house sees a new wave of visitors seeking the Philosopher's Stone.",
-        image: 'https://images.unsplash.com/photo-1551269901-5c5e14c25df7?w=640&q=80'
+        description: "J.K. Rowling includes Nicolas Flamel in Harry Potter. Suddenly the real Flamel's house sees a new wave of visitors seeking the Philosopher's Stone."
       }
     ],
     funFact: "The carved inscriptions on the facade were instructions for the poor lodgers — medieval terms of service, essentially."
@@ -72,7 +68,7 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3589, 48.8551],
     period: '1913',
     shortDesc: "Art Nouveau masterpiece by Guimard",
-    image: 'https://images.unsplash.com/photo-1555992336-03a23c7b20ee?w=640&q=80',
+    image: './images/synagogue.jpg',
     teaser: {
       era: 'Belle Époque',
       category: 'Religious',
@@ -82,26 +78,22 @@ const LOCATIONS: Location[] = [
       {
         year: '1913',
         title: 'Construction',
-        description: "Hector Guimard, famous for Paris Métro entrances, designs this synagogue — his only religious building. The undulating concrete facade was revolutionary.",
-        image: 'https://images.unsplash.com/photo-1555992336-03a23c7b20ee?w=640&q=80'
+        description: "Hector Guimard, famous for Paris Métro entrances, designs this synagogue — his only religious building. The undulating concrete facade was revolutionary."
       },
       {
         year: '1940',
         title: 'Nazi Occupation',
-        description: "During WWII, the synagogue is damaged but survives. The Marais Jewish community faces deportation; many never return.",
-        image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=640&q=80'
+        description: "During WWII, the synagogue is damaged but survives. The Marais Jewish community faces deportation; many never return."
       },
       {
         year: '1945',
         title: 'Liberation',
-        description: "The synagogue reopens after the war. It becomes a symbol of the resilient Pletzl (Jewish quarter) community.",
-        image: 'https://images.unsplash.com/photo-1549877452-9c387954fbc2?w=640&q=80'
+        description: "The synagogue reopens after the war. It becomes a symbol of the resilient Pletzl (Jewish quarter) community."
       },
       {
         year: '2019',
         title: 'Restoration',
-        description: "Major restoration preserves Guimard's Art Nouveau details. The building is now one of the few Guimard interiors open to visitors.",
-        image: 'https://images.unsplash.com/photo-1574362848149-11496d93a7c7?w=640&q=80'
+        description: "Major restoration preserves Guimard's Art Nouveau details. The building is now one of the few Guimard interiors open to visitors."
       }
     ],
     funFact: "Guimard married an American Jewish woman — likely the reason he took this unusual commission."
@@ -112,7 +104,7 @@ const LOCATIONS: Location[] = [
     coordinates: [2.3617, 48.8574],
     period: '1580s',
     shortDesc: "16th-century mansion turned cultural haven",
-    image: 'https://images.unsplash.com/photo-1514933651103-005eec06c04b?w=640&q=80',
+    image: './images/swedish.jpg',
     teaser: {
       era: 'Renaissance',
       category: 'Cultural',
@@ -122,26 +114,22 @@ const LOCATIONS: Location[] = [
       {
         year: '1580s',
         title: 'Construction',
-        description: "Hôtel de Marle is built as a Renaissance mansion. The stunning courtyard survives centuries of Parisian transformation largely intact.",
-        image: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=640&q=80'
+        description: "Hôtel de Marle is built as a Renaissance mansion. The stunning courtyard survives centuries of Parisian transformation largely intact."
       },
       {
         year: '1789',
         title: 'Revolution',
-        description: "The owner, a tax collector, is murdered during the French Revolution. The building passes through various hands.",
-        image: 'https://images.unsplash.com/photo-1564769662533-4f00a87b4056?w=640&q=80'
+        description: "The owner, a tax collector, is murdered during the French Revolution. The building passes through various hands."
       },
       {
         year: '1971',
         title: 'Swedish Acquisition',
-        description: "Sweden acquires the building and transforms it into a cultural center. A courtyard café introduces Parisians to fika.",
-        image: 'https://images.unsplash.com/photo-1523906834658-6e24ef2386f9?w=640&q=80'
+        description: "Sweden acquires the building and transforms it into a cultural center. A courtyard café introduces Parisians to fika."
       },
       {
         year: 'Today',
         title: 'Cultural Hub',
-        description: "The café serves exceptional cinnamon buns and coffee. It's a hidden oasis where Swedish and French cultures blend.",
-        image: 'https://images.unsplash.com/photo-1509042239860-f550ce710b93?w=640&q=80'
+        description: "The café serves exceptional cinnamon buns and coffee. It's a hidden oasis where Swedish and French cultures blend."
       }
     ],
     funFact: "Fika isn't just a coffee break — it's a Swedish philosophy of slowing down and connecting with others."
@@ -306,17 +294,10 @@ function InfoCard({ location, layer, onClose, onPrev, onNext }: {
     <div className="info-card">
       <button className="card-close" onClick={onClose}>×</button>
       
-      {/* Image */}
-      {currentEvent?.image && (
-        <div className="card-image">
-          <img src={currentEvent.image} alt={currentEvent.title} />
-        </div>
-      )}
-      {isFunFact && location.image && (
-        <div className="card-image">
-          <img src={location.image} alt={location.name} />
-        </div>
-      )}
+      {/* Single image for the location */}
+      <div className="card-image">
+        <img src={location.image} alt={location.name} />
+      </div>
       
       <div className="card-content">
         <div className="card-header">
@@ -511,7 +492,7 @@ function App() {
       updateMarkers(zoom)
     })
 
-    // Get user location
+    // Get user location - ALWAYS center on user when found
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -524,20 +505,19 @@ function App() {
           const userIcon = L.divIcon({
             className: 'user-marker-container',
             html: '<div class="user-dot"></div>',
-            iconSize: [16, 16],
-            iconAnchor: [8, 8]
+            iconSize: [40, 40],
+            iconAnchor: [20, 20]
           })
           
           userMarkerRef.current = L.marker(userLatLng, { icon: userIcon })
             .addTo(mapInstance.current!) as unknown as L.CircleMarker
           
-          // Center on user if near Paris
-          const distFromParis = Math.abs(userLatLng[0] - PARIS_CENTER[0]) + Math.abs(userLatLng[1] - PARIS_CENTER[1])
-          if (distFromParis < 0.5) {
-            mapInstance.current?.setView(userLatLng, 16)
-          }
+          // Always center on user
+          mapInstance.current?.setView(userLatLng, 16)
         },
-        () => {},
+        (err) => {
+          console.log('Geolocation error:', err)
+        },
         { enableHighAccuracy: true, timeout: 10000 }
       )
 

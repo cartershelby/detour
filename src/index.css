@@ -283,50 +283,11 @@ body {
   }
 }
 
-/* User location marker - prominent dot with glow */
-.user-marker-container {
-  background: none !important;
-  border: none !important;
-  width: 50px !important;
-  height: 50px !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  z-index: 9999 !important;
+/* User location marker - using native CircleMarker for mobile compatibility */
+/* Styles are set inline in JS, but we can add animation via CSS */
+.user-dot-marker {
+  filter: drop-shadow(0 0 6px rgba(34, 197, 94, 0.8));
 }
-
-.user-dot {
-  width: 18px;
-  height: 18px;
-  background: #22c55e;
-  border-radius: 50%;
-  border: 3px solid white;
-  box-shadow: 
-    0 0 0 4px rgba(34, 197, 94, 0.4),
-    0 0 20px 10px rgba(34, 197, 94, 0.5),
-    0 0 40px 20px rgba(34, 197, 94, 0.3);
-  animation: user-pulse 2s ease-in-out infinite;
-}
-
-@keyframes user-pulse {
-  0%, 100% { 
-    transform: scale(1);
-    box-shadow: 
-      0 0 0 4px rgba(34, 197, 94, 0.4),
-      0 0 20px 10px rgba(34, 197, 94, 0.5),
-      0 0 40px 20px rgba(34, 197, 94, 0.3);
-  }
-  50% { 
-    transform: scale(1.1);
-    box-shadow: 
-      0 0 0 6px rgba(34, 197, 94, 0.5),
-      0 0 25px 15px rgba(34, 197, 94, 0.6),
-      0 0 50px 25px rgba(34, 197, 94, 0.4);
-  }
-}
-
-/* (removed old user-glow animation - now using user-pulse) */
-
 
 /* Floating Info Card */
 .info-card {

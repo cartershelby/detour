@@ -400,12 +400,12 @@ function App() {
 
   // Get pin size based on zoom level
   const getPinSize = useCallback((zoom: number) => {
-    if (zoom >= 18) return 28
-    if (zoom >= 17) return 24
-    if (zoom >= 16) return 20
-    if (zoom >= 15) return 16
-    if (zoom >= 14) return 14
-    return 12
+    if (zoom >= 18) return 40
+    if (zoom >= 17) return 34
+    if (zoom >= 16) return 28
+    if (zoom >= 15) return 24
+    if (zoom >= 14) return 20
+    return 16
   }, [])
 
   // Update which locations are unlocked based on user position (merges with existing)
@@ -501,18 +501,34 @@ function App() {
           setUserPosition(userLatLng)
           updateUnlockedLocations(userLatLng[0], userLatLng[1])
           
-          // Add user marker using divIcon for proper glow effect
-          const userIcon = L.divIcon({
-            className: 'user-marker-container',
-            html: '<div class="user-dot"></div>',
-            iconSize: [50, 50],
-            iconAnchor: [25, 25]
-          })
+          // Use native CircleMarker for better mobile compatibility
+          // Outer glow circle
+          L.circleMarker(userLatLng, {
+            radius: 24,
+            fillColor: '#22c55e',
+            fillOpacity: 0.2,
+            stroke: false,
+            className: 'user-glow-outer'
+          }).addTo(mapInstance.current!)
           
-          userMarkerRef.current = L.marker(userLatLng, { 
-            icon: userIcon,
-            zIndexOffset: 1000  // Ensure user marker is on top
-          }).addTo(mapInstance.current!) as unknown as L.CircleMarker
+          // Inner glow circle
+          L.circleMarker(userLatLng, {
+            radius: 16,
+            fillColor: '#22c55e',
+            fillOpacity: 0.3,
+            stroke: false,
+            className: 'user-glow-inner'
+          }).addTo(mapInstance.current!)
+          
+          // Main user dot
+          userMarkerRef.current = L.circleMarker(userLatLng, {
+            radius: 8,
+            fillColor: '#22c55e',
+            fillOpacity: 1,
+            color: '#ffffff',
+            weight: 3,
+            className: 'user-dot-marker'
+          }).addTo(mapInstance.current!)
           
           // Always center on user
           mapInstance.current?.setView(userLatLng, 16)

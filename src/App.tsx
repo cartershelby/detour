@@ -360,10 +360,12 @@ function App() {
   const userGlowInnerRef = useRef<L.CircleMarker | null>(null)
   const userLocationRef = useRef<[number, number] | null>(null)
   const hasCenteredOnUserRef = useRef(false)
+  const unlockedIdsRef = useRef<string[]>(['nicolas-flamel'])
   
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [lockedLocation, setLockedLocation] = useState<Location | null>(null)
   const [userPosition, setUserPosition] = useState<[number, number] | null>(null)
+  const [showTracker, setShowTracker] = useState(false)
   const [unlockedIds, setUnlockedIds] = useState<string[]>(() => {
     // Load saved progress from localStorage
     try {
@@ -374,11 +376,13 @@ function App() {
         if (!parsed.includes('nicolas-flamel')) {
           parsed.push('nicolas-flamel')
         }
+        unlockedIdsRef.current = parsed
         return parsed
       }
       // Default: unlock first location for demo
       return ['nicolas-flamel']
-    } catch {
+    } catch (e) {
+      console.error('Failed to load saved progress:', e)
       return ['nicolas-flamel']
     }
   })
@@ -394,10 +398,11 @@ function App() {
 
   // Save progress to localStorage whenever unlocked locations change
   useEffect(() => {
+    unlockedIdsRef.current = unlockedIds
     try {
       localStorage.setItem('detour-unlocked', JSON.stringify(unlockedIds))
-    } catch {
-      // Ignore storage errors
+    } catch (e) {
+      console.error('Failed to save progress:', e)
     }
   }, [unlockedIds])
 
@@ -431,10 +436,10 @@ function App() {
   const updateMarkers = useCallback((zoom: number) => {
     const size = getPinSize(zoom)
     markersRef.current.forEach((marker, id) => {
-      const isUnlocked = unlockedIds.includes(id)
+      const isUnlocked = unlockedIdsRef.current.includes(id)
       marker.setIcon(isUnlocked ? createPinIcon(size) : createLockedPinIcon(size))
     })
-  }, [unlockedIds, getPinSize])
+  }, [getPinSize])
 
   // Splash screen with slow fade
   useEffect(() => {
@@ -468,14 +473,14 @@ function App() {
     const initialSize = getPinSize(initialZoom)
     LOCATIONS.forEach(location => {
       const latLng: [number, number] = [location.coordinates[1], location.coordinates[0]]
-      const isUnlocked = unlockedIds.includes(location.id)
+      const isUnlocked = unlockedIdsRef.current.includes(location.id)
       const marker = L.marker(latLng, { 
         icon: isUnlocked ? createPinIcon(initialSize) : createLockedPinIcon(initialSize) 
       }).addTo(mapInstance.current!)
       
       marker.on('click', () => {
-        const latLng: [number, number] = [location.coordinates[1], location.coordinates[0]]
-        if (unlockedIds.includes(location.id)) {
+        // Use ref to get current unlocked state (avoids stale closure)
+        if (unlockedIdsRef.current.includes(location.id)) {
           setSelectedLocation(location)
           setLockedLocation(null)
           setInfoLayer(0)
@@ -557,7 +562,7 @@ function App() {
           userGlowInnerRef.current?.setLatLng(userLatLng)
           updateUnlockedLocations(userLatLng[0], userLatLng[1])
         },
-        () => {},
+        (err) => console.log('Position watch error:', err.code, err.message),
         { enableHighAccuracy: true }
       )
     }
@@ -566,7 +571,7 @@ function App() {
       mapInstance.current?.remove()
       mapInstance.current = null
     }
-  }, [showSplash, getPinSize, updateUnlockedLocations, unlockedIds])
+  }, [showSplash, getPinSize, updateUnlockedLocations])
 
   // Update markers when unlocked state changes
   useEffect(() => {
@@ -586,10 +591,11 @@ function App() {
   }
 
   const handleNextLayer = () => {
-    setInfoLayer(prev => prev + 1)
+    if (selectedLocation) {
+      const maxLayer = selectedLocation.timeline.length // timeline events + fun fact
+      setInfoLayer(prev => Math.min(prev + 1, maxLayer))
+    }
   }
-
-  const [showTracker, setShowTracker] = useState(false)
 
   // Calculate nearest locked location
   const getNearestLocked = useCallback(() => {

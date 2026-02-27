@@ -356,7 +356,10 @@ function App() {
   const mapInstance = useRef<L.Map | null>(null)
   const markersRef = useRef<Map<string, L.Marker>>(new Map())
   const userMarkerRef = useRef<L.CircleMarker | null>(null)
+  const userGlowOuterRef = useRef<L.CircleMarker | null>(null)
+  const userGlowInnerRef = useRef<L.CircleMarker | null>(null)
   const userLocationRef = useRef<[number, number] | null>(null)
+  const hasCenteredOnUserRef = useRef(false)
   
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
   const [lockedLocation, setLockedLocation] = useState<Location | null>(null)
@@ -492,7 +495,7 @@ function App() {
       updateMarkers(zoom)
     })
 
-    // Get user location - ALWAYS center on user when found
+    // Get user location - only center on first acquisition
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
@@ -503,7 +506,7 @@ function App() {
           
           // Use native CircleMarker for better mobile compatibility
           // Outer glow circle
-          L.circleMarker(userLatLng, {
+          userGlowOuterRef.current = L.circleMarker(userLatLng, {
             radius: 24,
             fillColor: '#22c55e',
             fillOpacity: 0.2,
@@ -512,7 +515,7 @@ function App() {
           }).addTo(mapInstance.current!)
           
           // Inner glow circle
-          L.circleMarker(userLatLng, {
+          userGlowInnerRef.current = L.circleMarker(userLatLng, {
             radius: 16,
             fillColor: '#22c55e',
             fillOpacity: 0.3,
@@ -530,8 +533,11 @@ function App() {
             className: 'user-dot-marker'
           }).addTo(mapInstance.current!)
           
-          // Always center on user
-          mapInstance.current?.setView(userLatLng, 16)
+          // Only center on user once (first time)
+          if (!hasCenteredOnUserRef.current) {
+            mapInstance.current?.setView(userLatLng, 16)
+            hasCenteredOnUserRef.current = true
+          }
         },
         (err) => {
           console.log('Geolocation error:', err)
@@ -539,13 +545,16 @@ function App() {
         { enableHighAccuracy: true, timeout: 10000 }
       )
 
-      // Watch position for updates
+      // Watch position for updates - just update marker position, don't re-center
       navigator.geolocation.watchPosition(
         (pos) => {
           const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
           userLocationRef.current = userLatLng
           setUserPosition(userLatLng)
+          // Update all user marker layers
           userMarkerRef.current?.setLatLng(userLatLng)
+          userGlowOuterRef.current?.setLatLng(userLatLng)
+          userGlowInnerRef.current?.setLatLng(userLatLng)
           updateUnlockedLocations(userLatLng[0], userLatLng[1])
         },
         () => {},

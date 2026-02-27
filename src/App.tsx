@@ -231,25 +231,25 @@ function Logo({ size = 'md' }: { size?: 'sm' | 'md' | 'lg' }) {
 }
 
 // Locked Location Card Component
-function LockedCard({ location, distance, onClose }: { 
+function LockedCard({ location, distance, onClose }: {
   location: Location
   distance: number | null
-  onClose: () => void 
+  onClose: () => void
 }) {
   const formatDistance = (d: number) => {
-    if (d < 1000) return `${Math.round(d)}m away`
-    return `${(d / 1000).toFixed(1)}km away`
+    if (d < 1000) return `${Math.round(d)}m`
+    return `${(d / 1000).toFixed(1)}km`
   }
-  
+
   return (
     <div className="locked-card">
       <button className="card-close" onClick={onClose}>×</button>
       <div className="locked-icon">🔒</div>
       <div className="locked-title">Location Locked</div>
-      
+
       {distance !== null && (
         <div className="locked-distance">
-          <span className="distance-value">{formatDistance(distance)}</span>
+          <span className="distance-value">{formatDistance(distance)} away</span>
           <span className="distance-hint">Get within 150m to unlock</span>
         </div>
       )}
@@ -360,6 +360,7 @@ function App() {
   const userGlowInnerRef = useRef<L.CircleMarker | null>(null)
   const userLocationRef = useRef<[number, number] | null>(null)
   const hasCenteredOnUserRef = useRef(false)
+  const watchIdRef = useRef<number | null>(null)
   const unlockedIdsRef = useRef<string[]>(['nicolas-flamel'])
   
   const [selectedLocation, setSelectedLocation] = useState<Location | null>(null)
@@ -551,7 +552,7 @@ function App() {
       )
 
       // Watch position for updates - just update marker position, don't re-center
-      navigator.geolocation.watchPosition(
+      watchIdRef.current = navigator.geolocation.watchPosition(
         (pos) => {
           const userLatLng: [number, number] = [pos.coords.latitude, pos.coords.longitude]
           userLocationRef.current = userLatLng
@@ -568,6 +569,17 @@ function App() {
     }
 
     return () => {
+      // Clear geolocation watch
+      if (watchIdRef.current !== null) {
+        navigator.geolocation.clearWatch(watchIdRef.current)
+        watchIdRef.current = null
+      }
+      // Clear marker refs
+      userMarkerRef.current = null
+      userGlowOuterRef.current = null
+      userGlowInnerRef.current = null
+      markersRef.current.clear()
+      // Remove map
       mapInstance.current?.remove()
       mapInstance.current = null
     }

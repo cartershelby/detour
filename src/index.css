@@ -71,7 +71,7 @@ body {
   justify-content: space-between;
   align-items: flex-start;
   pointer-events: none;
-  z-index: 1000;
+  z-index: 1002;
 }
 
 .header-logo {
@@ -118,7 +118,7 @@ body {
   max-height: 60vh;
   overflow-y: auto;
   box-shadow: 0 12px 48px rgba(0,0,0,0.15);
-  z-index: 1001;
+  z-index: 1003;
   animation: slide-in 0.25s ease-out;
 }
 
@@ -320,10 +320,10 @@ body {
   border-radius: 20px;
   width: calc(100% - 40px);
   max-width: 340px;
-  max-height: calc(100vh - 180px);
+  max-height: min(calc(100vh - 180px), 80vh);
   overflow: hidden;
   box-shadow: 0 12px 48px rgba(0,0,0,0.15);
-  z-index: 1000;
+  z-index: 1001;
   animation: card-enter 0.3s ease-out;
 }
 
@@ -342,7 +342,7 @@ body {
 
 .card-content {
   padding: 16px 20px 20px;
-  max-height: calc(100vh - 340px);
+  max-height: min(calc(100vh - 340px), 50vh);
   overflow-y: auto;
 }
 

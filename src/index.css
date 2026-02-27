@@ -101,10 +101,15 @@ body {
   box-shadow: 0 6px 28px rgba(0,0,0,0.12);
 }
 
+.status-badge:active {
+  transform: scale(0.98);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
 /* Progress Tracker Panel */
 .tracker-panel {
   position: absolute;
-  top: 110px;
+  top: calc(110px + env(safe-area-inset-top));
   right: 16px;
   background: white;
   border-radius: 20px;
@@ -143,8 +148,8 @@ body {
 }
 
 .tracker-close {
-  width: 28px;
-  height: 28px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: var(--bg-light);
   border-radius: 50%;
@@ -193,6 +198,11 @@ body {
 
 .tracker-item.unlocked:hover {
   background: #e8f4fc;
+}
+
+.tracker-item.unlocked:active {
+  background: #d4ecf9;
+  transform: scale(0.98);
 }
 
 .tracker-item.locked {
@@ -252,7 +262,7 @@ body {
 }
 
 .custom-pin.collected svg {
-  animation: pulse-glow 2.5s ease-in-out infinite;
+  animation: pulse-glow 2.5s ease-in-out 1;
   cursor: pointer;
 }
 
@@ -303,7 +313,7 @@ body {
 /* Floating Info Card */
 .info-card {
   position: absolute;
-  top: 120px;
+  top: calc(120px + env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
   background: white;
@@ -448,8 +458,8 @@ body {
   position: absolute;
   top: 12px;
   right: 12px;
-  width: 32px;
-  height: 32px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(4px);
@@ -479,7 +489,7 @@ body {
 /* Locked Location Card */
 .locked-card {
   position: absolute;
-  top: 140px;
+  top: calc(140px + env(safe-area-inset-top));
   left: 50%;
   transform: translateX(-50%);
   background: white;
@@ -584,8 +594,8 @@ body {
 }
 
 .nav-arrow {
-  width: 36px;
-  height: 36px;
+  width: 44px;
+  height: 44px;
   border: none;
   background: var(--bg-light);
   border-radius: 50%;
@@ -602,6 +612,12 @@ body {
 .nav-arrow:hover:not(.disabled) {
   background: var(--electric-blue);
   color: white;
+}
+
+.nav-arrow:active:not(.disabled) {
+  background: var(--electric-blue);
+  color: white;
+  transform: scale(0.95);
 }
 
 .nav-arrow.disabled {
@@ -631,10 +647,10 @@ body {
 /* Recenter button */
 .recenter-btn {
   position: absolute;
-  bottom: calc(160px + env(safe-area-inset-bottom));
+  bottom: calc(100px + env(safe-area-inset-bottom));
   right: 10px;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
   background: white;
   border: none;
